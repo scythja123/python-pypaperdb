@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8'?>
+ <!DOCTYPE bibliography SYSTEM 'hest'>
+
+<bibliography>
+<indexing>
+  <entryTypes>
+    <entryType>
+      <id> 0 </id>
+      <key> Paper </key>
+    </entryType>
+    <entryType>
+      <id> 1 </id>
+      <key> Book </key>
+    </entryType>
+    <entryType>
+      <id> 2 </id>
+      <key> Thesis </key>
+    </entryType>
+    <entryType>
+      <id> 3 </id>
+      <key> Presentation </key>
+    </entryType>
+    <entryType>
+      <id> 4 </id>
+      <key> Course - Notes </key>
+    </entryType>
+  </entryTypes>
+</indexing>
+<entries>
+
+<entry><id>test1</id><title>Hello, how are you</title><inPaperform>0</inPaperform><pdfFilePath></pdfFilePath><abstract></abstract><summary>A summary</summary><linkToPdf>we will find it one day</linkToPdf><bibTex>@misc{test1,&lt;br&gt;    author = {Test. A},&lt;br&gt;    title = {Hello, how are you},&lt;br&gt;}&lt;br&gt;</bibTex><paperType>0</paperType><citing></citing><author>Test. A</author><year>None</year><journal>None</journal><favorite>0</favorite><updated>2019-09-26</updated><topic>0</topic><stichwort>paper</stichwort><stichwort>sunshine</stichwort></entry>
+</entries>
+</bibliography>

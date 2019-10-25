@@ -22,11 +22,8 @@ class SearchWidget(QtWidgets.QScrollArea):
         self.topicList = topicList
         self.entryTypeList = entryTypeList
 
-        # self.searchList.append(SearchCommandWidget(self.config,self.topicList,self.entryTypeList))
-
         self.layout = QtWidgets.QVBoxLayout()
         self.__addNewSearchLine()
-        self.layout.addStretch(1)
        
         areaWidget = QtWidgets.QWidget()
         areaWidget.setLayout(self.layout)
@@ -46,7 +43,7 @@ class SearchWidget(QtWidgets.QScrollArea):
 
    
         
-    def __addNewSearchLine(self,):
+    def __addNewSearchLine(self):
         log.info('newsearchline - number of searches ' + str(len(self.searchList)))
         numberOfLines = len(self.searchList)
         self.searchList.append(SearchCommandWidget(self.topicList,self.entryTypeList))
@@ -67,9 +64,36 @@ class SearchWidget(QtWidgets.QScrollArea):
         self.searchList[numberOfLines].removeButton.clicked.connect(self.__removeSearchLine)
         
         self.layout.insertWidget(numberOfLines,self.searchList[numberOfLines])
+        self.layout.addStretch(1)
+        
+    def __removeSearchLineByIndex(self,index=0):
+        removed_search = self.searchList.pop(index)
+        numberOfLines = len(self.searchList)
+        # if the last search field should be removed we have to disconnect and reconnect the action to generate new search fields
+        if index == numberOfLines:
+            removed_search.keywordField.textEdited.disconnect()
+            if numberOfLines > 0:
+                #has to be improved to happen if some text is entered
+                self.searchList[numberOfLines-1].keywordField.textEdited.connect(self.__addNewSearchLine)
+            else:
+                self.__addNewSearchLine()
+                
+        removed_search.keywordField.editingFinished.disconnect()
+        # # Not yet implemented!!
+        # self.searchList[numberOfLines].removeButton.clicked.disconnect(self.__remove)
+        removed_search.locationField.activated.disconnect()
+        removed_search.typeField.activated.disconnect()
+        removed_search.topicField.activated.disconnect()
+        removed_search.removeButton.clicked.disconnect()
+        self.layout.removeWidget(removed_search)
 
-    
-   
+    def change_topic_entrytype(self, new_topicList, new_entry_type_list):
+        self.topicList = new_topicList
+        self.entryTypeList = new_entry_type_list
+        for i in range(len(self.searchList)):
+            self.__removeSearchLineByIndex()
+        self.parent().parent().updated()
+
     def returnSearchList(self):
         keywordList = []
         if len(self.searchList)==1:
@@ -107,7 +131,7 @@ class SearchWidget(QtWidgets.QScrollArea):
         
     def __removeSearchLine(self):
         keywordLine = self.sender().parent()
-        if keywordLine in self.searchList[:-1]:
+        if keywordLine in self.searchList:
              self.searchList.remove(keywordLine)
              self.layout.removeWidget(keywordLine)
              self.parent().parent().updated()
@@ -186,8 +210,6 @@ class SearchCommandWidget(QtWidgets.QFrame):
 
         log.info('selection: ' + self.keywordField.text())
         return (self.keywordField.text(),self.locationField.currentText(),papertype,topic)
-
-
 
     def __printTest(self):
         print("test")

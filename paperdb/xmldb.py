@@ -360,24 +360,11 @@ class Database(paperdb.databaseBase.Database):
         if dbentry is not None:
             self.entryRoot.remove(dbentry)
 
-
-
     def _findKeywords(self):
-        
-        kwdListEdwin = []
-        kwdListSonja = []
-
+        kwdList = []
         for entry in self.entryRoot:
-
             kwds = [kwd.text for kwd in entry.findall('stichwort')]
+            kwdList.extend(kwds)
             
-            if "sonja" in kwds:
-                kwdListSonja.extend(filter(lambda x: (x != "sonja") & (x != "edwin"), kwds))
-            if "edwin" in kwds:
-                kwdListEdwin.extend(filter(lambda x: (x != "edwin") & (x != "sonja"), kwds))
-        
-        cntEdwin = Counter(kwdListEdwin).most_common()
-        cntSonja = Counter(kwdListSonja).most_common()
-
-        self._listEdwin = [kwd[0] for kwd in cntEdwin]
-        self._listSonja = [kwd[0] for kwd in cntSonja]
+        cnt = Counter(kwdList).most_common()
+        self._kwdlist = [kwd[0] for kwd in cnt]

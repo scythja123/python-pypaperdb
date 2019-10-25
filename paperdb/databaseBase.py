@@ -48,8 +48,7 @@ class Database():
 
     # what is this for?
     basePath = "bla"
-    _listSonja = "sonja,test"
-    _listEdwin = "edwin,test"
+    _kwdlist = "basic,test"
     
     def __init__(self,dbFilePath):
         self.basePath = os.path.dirname(dbFilePath)
@@ -112,12 +111,7 @@ class Database():
         return entries
 
     def getKeywords(self,user = None):
-        if user == "edwin":
-            kwdlist = self._listEdwin + self._listSonja
-        elif user == "sonja":
-            kwdlist =  self._listSonja + self._listEdwin
-        else:
-            kwdlist = self._listEdwin + self._listSonja
+        kwdlist = self._kwdlist
 
         uniquekwdlist = []
         for kwd in kwdlist:

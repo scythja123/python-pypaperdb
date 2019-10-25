@@ -280,29 +280,31 @@ class OverviewWindow(QtWidgets.QMainWindow):
             dbFileAbsPath = os.path.expanduser(dbFile)
             dbFileAbsPath = os.path.realpath(dbFileAbsPath)
             log.info(dbFileAbsPath)
-            print(fileNameLoad)
-            print(fileNameLoad[0].endswith(".xml"))
 
-            if fileNameLoad[0].endswith(".dummydb"):
-                log.info("dummy database")
-                import paperdb.dummydb as database
-                self.database = database.Database(dbFileAbsPath)
+            if fileNameLoad[0] is not None:
+                if fileNameLoad[0].endswith(".dummydb"):
+                    log.info("dummy database")
+                    import paperdb.dummydb as database
+                    self.database = database.Database(dbFileAbsPath)
+                elif fileNameLoad[0].endswith(".base"):
+                    log.info("base database")
+                    import paperdb.databaseBase as database
+                    self.database = database.Database(dbFileAbsPath)
+                elif fileNameLoad[0].endswith(".xml"):
+                    log.info("xml database")
+                    import paperdb.xmldb as database
+                    self.database = database.Database(dbFileAbsPath)
+                else:
+                    log.warning("No database imported.\n")
+                    return
+
                 self.updated()
-            elif fileNameLoad[0].endswith(".base"):
-                log.info("base database")
-                import paperdb.databaseBase as database
-                self.database = database.Database(dbFileAbsPath)
-                self.updated()
-            elif fileNameLoad[0].endswith(".xml"):
-                log.info("xml database")
-                import paperdb.xmldb as database
-                self.database = database.Database(dbFileAbsPath)
-                self.updated()
+                self.topicList =  self.database.getAllTopics()
+                self.entryTypeList =  self.database.getAllEntryTypes()
+                self.search.change_topic_entrytype(self.topicList,self.entryTypeList)
+
             else:
                 log.warning("No database imported.\n")
-                
-
-
 
     def editEntryById(self,entryId):
         # Here we first check whether the entry that we want to edit is already being edited. Here we have to check both whether it is the old entryId (in case edit is pressed in the GUI) or the new entryID (in case the edit dialog is used and the ID is proved manually).

@@ -11,7 +11,7 @@ import custom
 
 if __name__ == "__main__":
     # Someone launches this class directly
-    logger.error("please run application to start Paperdatabase")
+    log.error("please run application to start Paperdatabase")
 
         
 class Database():
@@ -59,52 +59,52 @@ class Database():
 
             
     def searchEntry(self,searchid):
-        logger.error("searchEntry not yet implemented, returns a dummy entry")
+        log.error("searchEntry not yet implemented, returns a dummy entry")
         return Entry("@misc{test1,author={Test. A}",self.__bibparser,self.__bibwriter)
 
     def existsid(self,searchid):
-        logger.error("existsid not yet implemented. returns True if id is yes, False otherwise")
+        log.error("existsid not yet implemented. returns True if id is yes, False otherwise")
         if(searchid=="yes"):
             return True
         else:
             return False
 
     def getAllTopics(self):
-        logger.error("getAllTopics not yet implemented. returns a sorted list of topics")
+        log.error("getAllTopics not yet implemented. returns a sorted list of topics")
         return list()
 
     def getAllEntryTypes(self):
-        logger.error("getAllEntryTypes not yet implemented. returns a sorted list of entryTypes")
+        log.error("getAllEntryTypes not yet implemented. returns a sorted list of entryTypes")
         return list()
 
     def addTopic(self,topic):
-        logger.error("addTopic not yet implemented. adds a topic to the database")
+        log.error("addTopic not yet implemented. adds a topic to the database")
 
     def addEntryType(self,entryType):
-        logger.error("addEntryType not yet implemented. adds a entryType to the database")
+        log.error("addEntryType not yet implemented. adds a entryType to the database")
 
     def removeTopic(self,topic):
-        logger.error("removeTopic not yet implemented. remove a topic to the database")
+        log.error("removeTopic not yet implemented. remove a topic to the database")
 
     def removeEntryType(self,entryType):
-        logger.error("removeEntryType not yet implemented. remove a entryType to the database")
+        log.error("removeEntryType not yet implemented. remove a entryType to the database")
                 
     def getAllEntries(self): 
-        logger.error("getAllEntries not yet implemented. returns two base entries")
+        log.error("getAllEntries not yet implemented. returns two base entries")
         entries =[]
         entries.append(Entry("@misc{test1,author={Test. A}",self.__bibparser,self.__bibwriter))
         entries.append(Entry("@misc{test2,author={Test. A}",self.__bibparser,self.__bibwriter))
         return entries
 
     def getFirstEntries(self,number):
-        logger.error("getFirstEntries not yet implemented. returns two base entries")
+        log.error("getFirstEntries not yet implemented. returns two base entries")
         entries =[]
         entries.append(Entry("@misc{test1,author={Test. A}",self.__bibparser,self.__bibwriter))
         entries.append(Entry("@misc{test2,author={Test. A}",self.__bibparser,self.__bibwriter))
         return entries
         
     def getEntries(self,keywords): 
-        logger.error("getEntries not yet implemented. returns two base entries")
+        log.error("getEntries not yet implemented. returns two base entries")
         entries =[]
         entries.append(Entry("@misc{test1,author={Test. A},",self.__bibparser,self.__bibwriter))
         entries.append(Entry("@misc{test2,author={Test. A},",self.__bibparser,self.__bibwriter))
@@ -130,15 +130,15 @@ class Database():
 
         bibtex=""
         for entry in entries:
-            bibtex = bibtex + entry.bibtex + "\n"
+            bibtex = bibtex + entry.export_bibtex(self.__external_writer) + "\n"
         
         #write to file
         bibfile = open(fileName,'w',encoding='utf-8')
         bibfile.write(bibtex)
         bibfile.close()
 
-        self.restore_writer()
-            
+        self.init_external_print()
+
         return bibtex
 
     def appendBibtex(self,keywords,fileName,options=None):
@@ -151,14 +151,14 @@ class Database():
 
         bibtex=""
         for entry in entries:
-            bibtex = bibtex + self.replaceChars2(entry.bibtex) + "\n"
+            bibtex = bibtex + self.replaceChars2(entry.export_bibtex(self.__external_writer)) + "\n"
         
         #write to file
         bibfile = open(fileName,'a',encoding='utf-8')
         bibfile.write(bibtex)
         bibfile.close()
 
-        self.restore_writer()
+        self.init_external_print()
         
         return bibtex
 
@@ -191,7 +191,7 @@ class Database():
                     outputfile = os.path.join(savePath,bibfilename)
         
         auxfile.close()
-        logger.debug("I am writing bib File")
+        log.debug("I am writing bib File")
         
         # process options adapt the writer and change to external writer
         self.process_print_options(options)
@@ -201,32 +201,33 @@ class Database():
         bibtex = ""
         for index in indexesToExport:
             if self.existsid(index):
-                bibtex = bibtex + self.searchEntry(index).bibtex  + "\n"
+                bibtex = bibtex + self.searchEntry(index).export_bibtex(self.__external_writer)  + "\n"
             else:
                 indexesNotFound.append(index)
                 log.debug(index + " not found in database")
-                
+
+        #print(bibtex)
         bibfile = open(outputfile,'w',encoding='utf-8')
         bibfile.write(bibtex)
 
         if len(indexesNotFound)>0:
-            logger.warning("I didn't find bitex entries for\n" + "\n".join(indexesNotFound))
+            log.warning("I didn't find bitex entries for\n" + "\n".join(indexesNotFound))
 
             
-        logger.info(str(len(indexesToExport)-len(indexesNotFound)) + "/" + str(len(indexesToExport)) + " BibTex entries written to " + outputfile)               
+        log.info(str(len(indexesToExport)-len(indexesNotFound)) + "/" + str(len(indexesToExport)) + " BibTex entries written to " + outputfile)               
         bibfile.close()
 
-        self.restore_writer()
+        self.init_external_print()
         
     
     def store(self,dbentry,tag,value):
-        logger.error("store not yet implemented")
+        log.error("store not yet implemented")
 
     def save(self,entry):
-        logger.error("save not yet implemented")
+        log.error("save not yet implemented")
 
     def remove(self,id):
-        logger.error("remove not yet implemented")
+        log.error("remove not yet implemented")
 
 
     def init_bibparser(self):
@@ -242,12 +243,12 @@ class Database():
         for field in internally_stored:
             standard = ['']
             recognised = dict()
-            listing = dict(custom.config.items('strings_'+field))
+            listing = dict(custom.config.items('strings_'+field.strip()))
             index = 0
             for key in listing:
                 index = index + 1
                 standard.append(key)
-                possibilities = str.split(listing[key],',')
+                possibilities = str.split(listing[key],';')
                 for item in possibilities:
                     val = item.lower()
                     val = val.lstrip().rstrip()
@@ -258,29 +259,27 @@ class Database():
         self.__bibparser = bibtexparser.bibparser.BibTexParser()
         self.__bibparser.overwrite_key_replacements(dict(custom.config.items('key_replacements')))
 
-        
         # make the writer for internal printing:
-        self.__internal_writer = bibtexparser.bibwriter.BibTexWriter()
-        self.__internal_writer.display_order = str.split(custom.config.get('bibtex','displayOrder'),',')
+        self.__bibwriter = bibtexparser.bibwriter.BibTexWriter()
+        self.__bibwriter.display_order = str.split(custom.config.get('bibtex','displayOrder'),',')
 
-        self.__bibwriter = self.__internal_writer
         
         self.__external_writer = bibtexparser.bibwriter.BibTexWriter()
-        self.__external_writer.indent = ' > '
-        self.__external_writer.display_order = str.split(custom.config.get('write_bibtex','displayOrder'),',')
-        self.__external_writer.do_not_display_fields = str.split(custom.config.get('write_bibtex','excludedTags'),',')
-        
-    def process_print_options(self,options):
-        self.__bibwriter = self.__external_writer
-        if 'excludedTags' in options:
-            self.__bibwriter.do_not_display_fields = options['excludedTags']
-        if 'includedTags' in options:
-            self.__bibwriter.do_only_display_fields = options['includedTags']
-        if 'month_as_string' in options:
-            self.__bibwriter.add_write_as_string_field('month',options['month_as_string'])
+        self.init_external_print()
 
-    def restore_writer(self):
-        self.__bibwriter = self.__internal_writer
+    def init_external_print(self):
+        self.__external_writer.indent = '  '
+        self.__external_writer.display_order = str.split(custom.config.get('write_bibtex','displayOrder'),',')
+        self.__external_writer.set_do_not_display_field(str.split(custom.config.get('write_bibtex','excludedTags'),','))
+
+    def process_print_options(self,options):
+        if options is not None:
+            if 'excludedTags' in options:
+                self.__external_writer.add_do_not_display_field(options['excludedTags'])
+            if 'includedTags' in options:
+                self.__external_writer.do_only_display_fields = options['includedTags']
+            if 'month_as_string' in options:
+                self.__external_writer.add_write_as_string_field('month',options['month_as_string'])
 
     def get_non_recognised_string_fields(self,field):
         return BibDefinitions.get_non_recognised_string_fields(field)

@@ -68,7 +68,11 @@ class Entry:
         self.citing = ""
         self.addKeyword(keywords)
 
-                           
+
+    def export_bibtex(self,writer):
+        if writer.is_writer():
+            return writer.write(self.__bibtex)
+        
     # getter/setter function for bibtex
     @property
     def bibtex(self):

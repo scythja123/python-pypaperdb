@@ -90,7 +90,8 @@ class OverviewWindow(QtWidgets.QMainWindow):
 
         # Submenu for sorting of entries
         sortMenu = viewMenu.addMenu("Sort by")
-        sortMenuAG = QtWidgets.QActionGroup(self,exclusive=True)
+        sortMenuAG = QtWidgets.QActionGroup(self)
+        sortMenuAG.setExclusive(True)
         a = sortMenuAG.addAction(QtWidgets.QAction('ID',self,triggered=lambda: self.__sortEntriesBy('entryId'),checkable=True))
         sortMenu.addAction(a)
         a.setChecked(True)

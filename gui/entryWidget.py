@@ -27,6 +27,7 @@ class EntryWidget(QtWidgets.QFrame):
     defaultButtonFontSize = 10
     defaultTextFontSize = 12
     defaultPrintedTitleColor = "rgb(45,45,150)" # Nice chilled dark blue
+    defaultBackgroundColor = "rgb(0,102,153)"
     
     def __init__(self,data,database,visibleFields,paperBasePath,win_parent):
         # Init the base class
@@ -47,7 +48,7 @@ class EntryWidget(QtWidgets.QFrame):
         self.setMinimumWidth(800)
         self.layout().setContentsMargins(3,5,3,0) # left.top.right,bottom
         # Set the style and color of the widget
-        self.setStyleSheet('QFrame {background-color: rgb(236,232,228);}')
+        self.setStyleSheet('QFrame {background-color: '+ self.backgroundColor +';}')
         self.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.setFrameShape(QtWidgets.QFrame.StyledPanel)
 
@@ -60,6 +61,7 @@ class EntryWidget(QtWidgets.QFrame):
         self.textFontSize = int(custom.config.get("font","text",fallback = self.defaultTextFontSize))
         self.buttonFontSize = int(custom.config.get("font","button",fallback = self.defaultButtonFontSize))
         self.printedTitleColor = str(custom.config.get("color","printedTitle",fallback = self.defaultPrintedTitleColor))
+        self.backgroundColor = str(custom.config.get("color","background",fallback = self.defaultBackgroundColor))
         
     def setFieldVisibility(self,visibleFields):
         fields = {'Authors','Keywords','Abstract','Summary','BibTex'}

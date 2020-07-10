@@ -161,8 +161,7 @@ class SearchCommandWidget(QtWidgets.QFrame):
         if self.topics:         # Only add topics if they exist in the database
             self.topicField.insertItems(0,sorted(self.topics))
         self.topicField.addItem("any")
-        self.topicField.setCurrentIndex(self.topicField.findText("any"))
-        
+        self.topicField.setCurrentIndex(self.topicField.findText(self.topics[0])) # always selects 
         self.keywordField = QtWidgets.QLineEdit()
         # self.keywordField.focusOutEvent(QtCore.Qt.NoFocus)
         self.keywordField.setPlaceholderText("Please insert search words, comma separated")

@@ -156,6 +156,9 @@ class OverviewWindow(QtWidgets.QMainWindow):
         # Finally we create the entryList
         self.__create_entry_overview(entries)        
         self.__showHideFields()
+
+        # and update list to get all defaults from the search list.
+        self.updated()
      
     def __missing_keys(self):
         # todo make option field for recognised words etc.
@@ -275,7 +278,7 @@ class OverviewWindow(QtWidgets.QMainWindow):
                 return
         
         # load another database
-        fileNameLoad = QtWidgets.QFileDialog.getOpenFileName(self,"Database file to load", self.database.basePath ,"database file")
+        fileNameLoad = QtWidgets.QFileDialog.getOpenFileName(self,"Database file to load", self.database.basePath ,"Database files (*.xml);;All files (*.*)")
         if fileNameLoad[0]:   # Only if we actually selected a file
             dbFile = fileNameLoad[0]
             dbFileAbsPath = os.path.expanduser(dbFile)

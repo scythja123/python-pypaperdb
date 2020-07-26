@@ -2,15 +2,15 @@
 import sys, os
 # rootpath = os.path.join(os.path.abspath(os.curdir),'../..')  # Doesn't seem to be used (22-02-2017) delete
 # rootpath = sys.path.append(rootpath) # Doesn't seem to be used (22-02-2017) delete
-from paperdb.entry import Entry
+from ..paperdb.entry import Entry
 from PyQt5 import QtGui
 from PyQt5 import QtCore 
 from PyQt5 import QtWidgets
-from misc import *
+from ..misc import *
 import re
 import logging
-log =logging.getLogger(__name__)
-import custom
+log = logging.getLogger(__name__)
+from .. import custom
 
 class AddEntryEventHanler():
 

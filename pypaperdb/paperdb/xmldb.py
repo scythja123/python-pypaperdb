@@ -1,11 +1,11 @@
 import lxml.etree as ET
-import paperdb.databaseBase
-from paperdb.entry import Entry
+from . import databaseBase
+from .entry import Entry
 from io import StringIO
 from collections import Counter
-from paperdb.warning import *
+from .warning import *
 import logging
-log =logging.getLogger(__name__)
+log = logging.getLogger(__name__)
 
 # SAVEMODE NEWCONVERT only used for converting the old style db to the new one
 SAVEMODE = "NEWCONVERT"  # OLD, NEW or NEWCONVERT
@@ -14,7 +14,7 @@ if __name__ == "__main__":
     # Someone launches this class directly
     print("please run application to start Paperdatabase")
 
-class Database(paperdb.databaseBase.Database):
+class Database(databaseBase.Database):
 
     charmap = {'\n': '<br>'}
     replaceChars = lambda self, myStr: str.join('',[self.charmap.get(c,c) for c in str(myStr)])
@@ -23,7 +23,7 @@ class Database(paperdb.databaseBase.Database):
 
    
     def __init__(self,dbFile):
-        paperdb.databaseBase.Database.__init__(self,dbFile)
+        databaseBase.Database.__init__(self,dbFile)
 
         self.parser = ET.XMLParser(remove_blank_text = True)
         try:
@@ -41,34 +41,40 @@ class Database(paperdb.databaseBase.Database):
             # </bibliography>
             # """
             xmlstr = """
-                  <bibliography>
-                  <indexing>
-                  <entryTypes>
-                  <entryType>
-                  <id> 0 </id>
-                  <key> Paper </key>
-                  </entryType>
-                  <entryType>
-                  <id> 1 </id>
-                  <key> Book </key>
-                  </entryType>
-                  <entryType>
-                  <id> 2 </id>
-                  <key> Thesis </key>
-                  </entryType>
-                  <entryType>
-                  <id> 3 </id>
-                  <key> Presentation </key>
-                  </entryType>
-                  <entryType>
-                  <id> 4 </id>
-                  <key> Course - Notes </key>
-                  </entryType>
-                  </entryTypes>
-                  </indexing>
-                  <entries>
-                  </entries>
-                  </bibliography>
+            <bibliography>
+            <indexing>
+            <topics>
+            <topic>
+            <id>0</id>
+            <key>Default</key>
+            </topic>           
+            </topics>
+            <entryTypes>
+            <entryType>
+            <id> 0 </id>
+            <key> Paper </key>
+            </entryType>
+            <entryType>
+            <id> 1 </id>
+            <key> Book </key>
+            </entryType>
+            <entryType>
+            <id> 2 </id>
+            <key> Thesis </key>
+            </entryType>
+            <entryType>
+            <id> 3 </id>
+            <key> Presentation </key>
+            </entryType>
+            <entryType>
+            <id> 4 </id>
+            <key> Course - Notes </key>
+            </entryType>
+            </entryTypes>
+            </indexing>
+            <entries>
+            </entries>
+            </bibliography>
             """
 
        

@@ -4,17 +4,17 @@ from operator import attrgetter # for the sorting algorithm
 from PyQt5 import QtGui
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
-from gui.addentry import AddEntry
-from gui.editentry import EditEntry
-from gui.entryWidget import EntryWidget
-from gui.searchWidget import SearchWidget
+from ..gui.addentry import AddEntry
+from ..gui.editentry import EditEntry
+from ..gui.entryWidget import EntryWidget
+from ..gui.searchWidget import SearchWidget
 import time
 import logging
 
 
-log =logging.getLogger(__name__)
+log = logging.getLogger(__name__)
 
-import custom
+from .. import  custom
 
 class OverviewWindow(QtWidgets.QMainWindow):
 

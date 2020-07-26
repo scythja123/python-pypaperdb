@@ -1,13 +1,13 @@
 #! /usr/bin/env python
-from paperdb.entryBase import Entry
+from .entryBase import Entry
 import sys,os
 import re ,datetime, socket
 import logging
-log =logging.getLogger(__name__)
+log = logging.getLogger(__name__)
 
-import bibtexparser
-from bibtexparser.bibDefinitions import BibDefinitions
-import custom
+import bibtexentryparser as bibtexparser
+from bibtexentryparser.bibDefinitions import BibDefinitions
+from .. import custom
 
 if __name__ == "__main__":
     # Someone launches this class directly

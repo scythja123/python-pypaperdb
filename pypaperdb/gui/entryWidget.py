@@ -4,12 +4,12 @@ from PyQt5 import QtGui
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 import subprocess
-import gui.specialWidget as oQt
-from gui.editentry import EditEntry
+from ..gui import specialWidget as oQt
+from ..gui.editentry import EditEntry
 from io import StringIO
-from gui.pdfButton import pdfButton
+from ..gui.pdfButton import pdfButton
 
-import custom
+from .. import custom
 
 import logging
 

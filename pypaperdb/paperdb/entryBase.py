@@ -1,7 +1,7 @@
 import re ,datetime, socket
 
 # external package
-import bibtexparser
+import bibtexentryparser
 
 import itertools
 import logging

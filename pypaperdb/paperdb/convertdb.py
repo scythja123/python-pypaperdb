@@ -3,8 +3,6 @@ from xmldb import Database
 import lxml.etree as ET
 
 
-
-
 def convert(dbFile,convertOutputFile):
     print "Converting %s to %s" %(dbFile, convertOutputFile)
     db = Database(dbFile)

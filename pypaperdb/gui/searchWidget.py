@@ -5,7 +5,7 @@ from PyQt5 import QtWidgets
 import re
 import time
 import logging
-log =logging.getLogger(__name__)
+log = logging.getLogger(__name__)
 
 if __name__ == "__main__":
     # Someone launches this class directly

@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 import re ,datetime, types, socket
-import paperdb.entryBase 
+from . import entryBase 
 
-class Entry(paperdb.entryBase.Entry):
+class Entry(entryBase.Entry):
 
     def __init__(self, bibtex, bibparser, bibwriter, pdfFile = "paperdb/test.pdf", keywords = "blob,blab,house", abstract = "Investigate the Blab in different areas of the house.", summary = "The Blab can be in a lot of different places."):
 
-        paperdb.entryBase.Entry.__init__(self,bibtex,bibparser,bibwriter,pdfFile,keywords,abstract,summary)
+        entryBase.Entry.__init__(self,bibtex,bibparser,bibwriter,pdfFile,keywords,abstract,summary)
         hostName = re.search("[A-Za-z0-9]*", socket.gethostname())
  
         self.iddb = "tmpID" + hostName.group(0)

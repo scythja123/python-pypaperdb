@@ -1,8 +1,8 @@
-from misc import *
+from ..misc import *
 from PyQt5.QtCore import pyqtSlot,  pyqtSignal
-from gui.addentry import AddEntry
+from ..gui.addentry import AddEntry
 
-import custom
+from .. import custom
 
 class EditEntry(AddEntry):
     

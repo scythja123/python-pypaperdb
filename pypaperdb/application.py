@@ -10,10 +10,10 @@ import re
 import logging 
 log = logging.getLogger(__name__)
 
-import custom
+from pypaperdb import custom
 
 # import paperdb
-import gui.overview as mainwindow
+from .gui import overview as mainwindow
 
 #import cProfile
 
@@ -51,19 +51,22 @@ def getConfig(filePath):
     config = configparser.RawConfigParser()
     config.optionxform = str
     
-    # check in ~ for configfile
-    try:
-        config.read_file(open(os.path.expanduser('~/.pypaperdb.cfg')))
-    except IOError:
-        log.info('User cfg not found: Loading default cfg')
-        config.read_file(open(filePath[0] + '/pypaperdb.cfg'))
-
+    # first read all default configurations
     cfgPath = filePath[0] + '/config'
     cfgFiles = []
     for file in os.listdir(cfgPath):
         if file.endswith('.cfg'):
             cfgFiles.append(os.path.join(cfgPath,file))
 
+    # read the user config to see what needs to be overwritten
+    user_cfgPath = os.path.expanduser('~/.pypaperdb')
+    if os.path.exists(user_cfgPath):
+        for file in os.listdir(user_cfgPath):
+            if file.endswith('.cfg'):
+                cfgFiles.append(os.path.join(user_cfgPath,file))
+    else:
+        log.info(f"No user specific config found. Use defualt settings.")
+                
     config.read(cfgFiles)
 
     return config
@@ -74,23 +77,30 @@ def openDatabase():
         db = custom.config.get('user','database')
     else:
         dbFile = custom.args.database
-        db = "xmldb"            # TODO read this from the mimetype or filetype
+        db = "xmldb"            # TODO: read this from the mimetype or filetype
         
     dbFileAbsPath = os.path.expanduser(dbFile)
+    dbFileAbsDir = os.path.dirname(dbFileAbsPath)
+    
+    if not os.path.exists(dbFileAbsDir):
+        log.warning(f"Path {dbFileAbsDir} does not exist. Creating")
+        os.mkdir(dbFileAbsDir)
     dbFileAbsPath = os.path.realpath(dbFileAbsPath)
     log.info(dbFileAbsPath)
-    # create data base: check which one to use from config files
+
+    
+    # createdata base: check which one to use from config files
         
     if db == "dummydb":
         log.info(db)
-        import paperdb.dummydb as database
+        from .paperdb import dummydb as database
     elif db =="base":
         log.info(db)
-        import paperdb.databaseBase as database
+        from .paperdb import databaseBase as database
     elif db == "xmldb":
         log.info(db)
         log.info(dbFileAbsPath)
-        import paperdb.xmldb as database
+        from .paperdb import xmldb as database
     elif db == "none":
         log.warning("No database imported.\n")
   
@@ -139,7 +149,8 @@ def initLogging():
 
     return
 
-if __name__ == "__main__":
+
+def start():
     # Someone launches this class directly
     
     # Let's first check if command line arguments are provided
@@ -171,3 +182,7 @@ if __name__ == "__main__":
     # enter the main loop
     app.exec()
 
+
+    
+if __name__ == "__main__":
+    start()

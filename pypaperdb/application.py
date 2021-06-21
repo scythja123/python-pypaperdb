@@ -9,7 +9,7 @@ import argparse
 import re
 import logging 
 log = logging.getLogger(__name__)
-
+# print(f'current path {sys.path}')
 from pypaperdb import custom
 
 # import paperdb
@@ -39,15 +39,14 @@ def argumentParser():
     arggroup = argparser.add_mutually_exclusive_group()
     arggroup.add_argument("--exclude_attr", help="Excludes list of BibTex tags provided. If empty argument is provided, use all arguments. When argument is omitted, the defaults from the cfg are used. Can not be used together with --include-attr", nargs="?", default=argparse.SUPPRESS)
     arggroup.add_argument("--include_attr", help="Only the list of provided tags are included.  Can not be used together with --exclude-attr.", nargs="?", default=argparse.SUPPRESS)
+    arggroup.add_argument("-c","--config",help="use custom config [default ~/.config/pypaperdb/pypaperdb.cfg]",default="")
     argparser.add_argument("-v","--verbose", help="Verbose output. -vv, -vvv for increased verbosity.",action="count", default=0)
 
     return argparser
 
 
-def getConfig(filePath):
+def getConfig(filePath,custom_config_path):
     # read config files:
-    cfgFile = 'pypaperdb.cfg'
-    #config = configparser.ConfigParser()
     config = configparser.RawConfigParser()
     config.optionxform = str
     
@@ -58,15 +57,21 @@ def getConfig(filePath):
         if file.endswith('.cfg'):
             cfgFiles.append(os.path.join(cfgPath,file))
 
-    # read the user config to see what needs to be overwritten
-    user_cfgPath = os.path.expanduser('~/.pypaperdb')
-    if os.path.exists(user_cfgPath):
-        for file in os.listdir(user_cfgPath):
-            if file.endswith('.cfg'):
-                cfgFiles.append(os.path.join(user_cfgPath,file))
+    # read the user config to see what needs to be overwritten from the default config
+    # user_cfgPath = os.path.expanduser('~/.pypaperdb')
+    if len(custom_config_path) > 0:
+        cfgFiles.append(custom_config_path)
     else:
-        log.info(f"No user specific config found. Use defualt settings.")
+        default_user_cfgPath = os.path.expanduser('~/.config/pypaperdb')
+        if os.path.exists(default_user_cfgPath):
+            for file in os.listdir(default_user_cfgPath):
+                if file == 'pypaperdb.cfg':
+                    # if file.endswith('.cfg'):
+                    cfgFiles.append(os.path.join(default_user_cfgPath,file))
+        else:
+            log.info(f"No user specific config found. Use defualt settings.")
                 
+    log.info(f'Loading config file {cfgFiles}')
     config.read(cfgFiles)
 
     return config
@@ -155,13 +160,12 @@ def start():
     
     # Let's first check if command line arguments are provided
     custom.args = argumentParser().parse_args()
-
     # set up the logger verbosity
     initLogging()
     
     filePath = os.path.split(os.path.realpath(__file__))  # get path of application file, also when called from symlink 
-
-    custom.config = getConfig(filePath) # load configs
+    user_config = custom.args.config
+    custom.config = getConfig(filePath,user_config) # load configs
 
     # Create the QApplication with the main window
     app = QtWidgets.QApplication(sys.argv)

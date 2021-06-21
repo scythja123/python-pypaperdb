@@ -17,6 +17,19 @@ Future planned features:
 * GUI option menu to configure topics and entry types
 * GUI configuration
 
+## Current setup
+make directory 
+
+`~/.config/pypaperdb`
+
+copy the template `pypaperdb.cfg` there and modify any settings as desired
+
+run 
+
+`sudo ln -s PATH_TO/pypaperdb.py /usr/bin/pypaperdb`
+
+run `pypaperdb` in terminal
+
 ## Installation
 
 `pip install --upgrade pypaperdb`

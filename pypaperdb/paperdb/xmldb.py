@@ -215,7 +215,7 @@ class Database(databaseBase.Database):
     def __returnEntry(self,searchid):
 
         # set bibtex fields, if it exists otherwise set the fields seperately
-        if searchid.findtext('bibTex') is not None and searchid.findtext('bibTex') is not "" and searchid.findtext('bibTex').strip("\n").strip().lower() is not "todo":
+        if (searchid.findtext('bibTex') != None) and (searchid.findtext('bibTex') != "") and (searchid.findtext('bibTex').strip("\n").strip().lower() != "todo"):
             entry = Entry(searchid.findtext('bibTex'),self.__bibparser,self.__bibwriter)
 
         else: # this is for thbackwards compatibility needed
@@ -237,7 +237,12 @@ class Database(databaseBase.Database):
 
         # set the fields unrelated to the bibtex
         entry.pdfFile = searchid.findtext('pdfFilePath').strip()
-        entry.abstract = searchid.findtext('abstract') if searchid.findtext('abstract') is not None else ""
+        abstract = searchid.findtext('abstract') if searchid.findtext('abstract') is not None else ""
+        if isinstance(abstract,bytes):
+            print('Abstract is bytes')
+            entry.abstract = abstract.decode('UTF-8')
+        else:
+            entry.abstract = abstract
         entry.summary = searchid.findtext('summary') if searchid.findtext('summary') is not None else ""
 
         entry.date = searchid.findtext('updated') if searchid.findtext('updated') is not None else ""
@@ -272,11 +277,14 @@ class Database(databaseBase.Database):
             xmlentry = ET.SubElement(dbentry,tag)
 
 
-        if SAVEMODE is "OLD":
+        if SAVEMODE == "OLD":
             xmlentry.text = value 
-        elif SAVEMODE is "NEW" or SAVEMODE is "NEWCONVERT":
-            xmlentry.text = self.replaceChars(value)  # Escape newline chars
-
+        elif SAVEMODE == "NEW" or SAVEMODE == "NEWCONVERT":
+            try:
+                xmlentry.text = self.replaceChars(value)  # Escape newline chars
+            except [ValueError,AttributeError] as e:
+                print(f'type {type(value)} -- string {value}')
+                raise e
     def save(self,entry):
 
         self.__parseXML()        
@@ -292,8 +300,8 @@ class Database(databaseBase.Database):
         self.store(dbentry,'title',self.removeNewline(entry.title))
         self.store(dbentry,'inPaperform',entry.printed)
         self.store(dbentry,'pdfFilePath',entry.pdfFile)
-        self.store(dbentry,'abstract',entry.abstract)
-        self.store(dbentry,'summary',entry.summary)
+        self.store(dbentry,'abstract',entry.abstract.encode('UTF-8'))
+        self.store(dbentry,'summary',entry.summary.encode('UTF-8'))
         self.store(dbentry,'linkToPdf',entry.link2pdf)
         self.store(dbentry,'bibTex',entry.bibtex)
         self.store(dbentry,'paperType',entry.paperType)
@@ -310,17 +318,17 @@ class Database(databaseBase.Database):
         
         # add keywords    
         for kwd in entry.keywords:
-            if len(kwd) is not 0:
+            if len(kwd) != 0:
                 newkwd = ET.SubElement(dbentry,'stichwort')
-                if SAVEMODE is "OLD":
+                if SAVEMODE == "OLD":
                     newkwd.text = kwd
-                elif SAVEMODE is "NEW" or SAVEMODE is "NEWCONVERT":
+                elif (SAVEMODE == "NEW") or (SAVEMODE == "NEWCONVERT"):
                     newkwd.text = self.replaceChars(kwd) # Escape newline chars
 
 
-        if SAVEMODE is "OLD":
+        if SAVEMODE == "OLD":
             self._writeXML() # store file
-        elif SAVEMODE is "NEWCONVERT" or SAVEMODE is "NEW":
+        elif (SAVEMODE == "NEWCONVERT") or (SAVEMODE == "NEW"):
             self._writeXMLLineWise() # store file line-wise
             
         entry.iddb = entry.entryId # Store the changed ID
@@ -342,10 +350,10 @@ class Database(databaseBase.Database):
         xmlStr += '<entries>\n'
         
         for entry in self.entryRoot:            
-            if SAVEMODE is "NEWCONVERT":
+            if SAVEMODE == "NEWCONVERT":
                 xmlStr += '\n' + self.removeNewline(ET.tostring(entry,method='xml',encoding='unicode',with_tail=True)) + '\n'
                
-            elif SAVEMODE is "NEW":
+            elif SAVEMODE == "NEW":
                 xmlStr += '\n' + ET.tostring(entry,method='xml',with_tail=True,encoding='unicode') + '\n'
 
         xmlStr += "</entries>\n</bibliography>\n"

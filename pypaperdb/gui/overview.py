@@ -288,15 +288,15 @@ class OverviewWindow(QtWidgets.QMainWindow):
             if fileNameLoad[0] is not None:
                 if fileNameLoad[0].endswith(".dummydb"):
                     log.info("dummy database")
-                    import paperdb.dummydb as database
+                    from ..paperdb import dummydb as database
                     self.database = database.Database(dbFileAbsPath)
                 elif fileNameLoad[0].endswith(".base"):
                     log.info("base database")
-                    import paperdb.databaseBase as database
+                    from ..paperdb import databaseBase as database
                     self.database = database.Database(dbFileAbsPath)
                 elif fileNameLoad[0].endswith(".xml"):
                     log.info("xml database")
-                    import paperdb.xmldb as database
+                    from ..paperdb import xmldb as database
                     self.database = database.Database(dbFileAbsPath)
                 else:
                     log.warning("No database imported.\n")

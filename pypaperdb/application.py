@@ -91,9 +91,20 @@ def getConfig(filePath,custom_config_path):
         if not Path(dbPath).is_absolute():
             # dbPath is relative to config
             cfgBasePath = os.path.split(c)[0]
+            if cfgBasePath == '':
+                cfgBasePath = '.'
             dbPath_full = os.path.abspath(cfgBasePath + '/' + dbPath)
             log.info(f'Database location relative config path as abspath: {dbPath_full}')
             config['user']['dbFile'] = dbPath_full
+        # do the same with the pdf path
+        paperPath = config.get('user','paperPath')
+        if  not Path(paperPath).is_absolute():
+            cfgBasePath = os.path.split(c)[0]
+            if cfgBasePath == '':
+                cfgBasePath = '.'
+            paperPath_full = os.path.abspath(cfgBasePath + '/' + paperPath)
+            log.info(f'PDF location relative config path as abspath: {paperPath_full}')
+            config['user']['paperPath'] = paperPath_full
 
     return config
 

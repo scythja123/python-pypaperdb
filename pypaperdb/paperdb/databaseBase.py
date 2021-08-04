@@ -65,9 +65,8 @@ class Database():
         self.basePath = os.path.dirname(dbFilePath)
         self.dbFile = dbFilePath
 
-        # set up the bibtex parser: 
+        # set up the bibtex parser:
         self.init_bibparser()
-
             
     def searchEntry(self,searchid):
         log.error("searchEntry not yet implemented, returns a dummy entry")
@@ -236,7 +235,6 @@ class Database():
             
         log.info(str(len(indexesToExport)-len(indexesNotFound)) + "/" + str(len(indexesToExport)) + " BibTex entries written to " + outputfile)               
         bibfile.close()
-
         self.init_external_print()
         
     
@@ -282,12 +280,12 @@ class Database():
         # make the writer for internal printing:
         self.__bibwriter = bibtexparser.bibwriter.BibTexWriter()
         self.__bibwriter.display_order = str.split(custom.config.get('bibtex','displayOrder'),',')
-
         
         self.__external_writer = bibtexparser.bibwriter.BibTexWriter()
         self.init_external_print()
 
     def init_external_print(self):
+        log.info("external writer initialized")
         self.__external_writer.indent = '  '
         self.__external_writer.display_order = str.split(custom.config.get('write_bibtex','displayOrder'),',')
         self.__external_writer.set_do_not_display_field(str.split(custom.config.get('write_bibtex','excludedTags'),','))
@@ -295,9 +293,11 @@ class Database():
     def process_print_options(self,options):
         if options is not None:
             if 'excludedTags' in options:
-                self.__external_writer.add_do_not_display_field(options['excludedTags'])
+                if options['excludedTags']:
+                    self.__external_writer.add_do_not_display_field(options['excludedTags'])
             if 'includedTags' in options:
-                self.__external_writer.do_only_display_fields = options['includedTags']
+                if options['includedTags']:
+                    self.__external_writer.do_only_display_fields = options['includedTags']
             if 'month_as_string' in options:
                 self.__external_writer.add_write_as_string_field('month',options['month_as_string'])
 

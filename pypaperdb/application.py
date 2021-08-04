@@ -154,7 +154,7 @@ def getBibtex():
     if not (hasattr(custom.args,'include_attr') or hasattr(custom.args,'exclude_attr')):
         try:
             # These go in pypaperdb.cfg as bibtexExcludedFields = url =, author =,...
-            excludedTags = tuple(custom.config.get('write_bibtex','bibtexExcludedFields').split(','))
+            excludedTags = tuple(custom.config.get('write_bibtex','excludedTags').split(','))
         except:
             excludedTags = tuple()
             print("No bibtexExcludedFields defined under [write_bibtex] in pypaperdb.cfg")
@@ -169,7 +169,7 @@ def getBibtex():
     log.info("excludedTags: " +  ", ".join(excludedTags))
     log.info("includedTags: " +  ", ".join(includedTags)) # not sure what this should
     options = {'excludedTags': excludedTags, 'includedTags':includedTags}
-
+   
     database = openDatabase()
     database.writeBibtexFromAux(custom.args.get_bibtex,options,custom.args.bibname)
 

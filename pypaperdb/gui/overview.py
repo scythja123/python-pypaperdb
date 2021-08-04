@@ -370,13 +370,19 @@ class OverviewWindow(QtWidgets.QMainWindow):
             return
         self.bibTexSavePath = os.path.dirname(fileNameToLoad[0])
         try:
-            # These go in pypaperdb.cfg as bibtexExcludedFields = url =, author =,...
-            excludedTags = tuple(custom.config.get('bibtex','bibtexExcludedFields').split(','))
+            # These go in pypaperdb.cfg as bibtexExcludedFields = url,author,...
+            excludedTags = tuple(custom.config.get('write_bibtex','excludedTags').split(','))
         except:
             excludedTags = tuple()
-            log.warning("No bibtexExcludedFields defined under [bibtex] in pypaperdb.cfg")
+            log.warning("No excludedTags defined under [write_bibtex] in pypaperdb.cfg")
+        try:
+            # These go in pypaperdb.cfg as onlyTags = url,author,...
+            includedTags = tuple(custom.config.get('write_bibtex','onlyTags').split(','))
+        except:
+            includedTags = tuple()
+            log.warning("No onlyTags defined under [write_bibtex] in pypaperdb.cfg")
 
-        options = {"excludedTags": excludedTags,"month_as_string":['','1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11','12']}
+        options = {"excludedTags": excludedTags,"includedTags":includedTags} #,"month_as_string":['','1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11','12']}
         self.database.writeBibtexFromAux(fileNameToLoad[0],options)
 
         

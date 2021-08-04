@@ -1,4 +1,6 @@
 #! /usr/bin/env python
+
+BIBTEX_ENTRY_PARSER_LOGGING_ENABLED = False
 from .entryBase import Entry
 import sys,os
 import re ,datetime, socket
@@ -9,6 +11,15 @@ import bibtexentryparser as bibtexparser
 from bibtexentryparser.bibDefinitions import BibDefinitions
 from .. import custom
 
+
+# This nastly little trick disables the logging from bibtexentryparser
+if not BIBTEX_ENTRY_PARSER_LOGGING_ENABLED:
+    for k in logging.Logger.manager.loggerDict:
+        if k.startswith('bibtexentryparser'):
+            log.debug(f'disabling logging for module {k}')
+            logging.getLogger(k).disabled = True
+
+            
 if __name__ == "__main__":
     # Someone launches this class directly
     log.error("please run application to start Paperdatabase")
@@ -162,12 +173,15 @@ class Database():
         
         return bibtex
 
-    def writeBibtexFromAux(self,inputfile,options=None,outputfile=None):
+    def writeBibtexFromAux(self,inputfile,options=None,outputfile=''):
         savePath = os.path.dirname(inputfile)
-
         # process the aux file
         auxfile = open(inputfile, 'r')
 
+        # fix backward compatibility
+        if outputfile is None:
+            outputfile = ''
+        
         indexesToExport = set([])
         for line in auxfile:
             if(re.search('(citation{)(.*)(})', line)):
@@ -178,7 +192,7 @@ class Database():
                     if(index != "biblatex-control"):
                         indexesToExport.add(index)
 
-            if not outputfile:
+            if outputfile == '':
                 if(re.search('(bibdata{)(.*)(})', line)):
                     bibfilenames = re.search('(bibdata{)(.*)(})', line)
                     bibfilenames = bibfilenames.group(2)
@@ -207,6 +221,12 @@ class Database():
                 log.debug(index + " not found in database")
 
         #print(bibtex)
+
+        if outputfile == '':
+            msg = 'No bibtex output found in the aux file or specified on commandline. Put "\bibliography{bibname}" in your tex document or specify "--bibname NAME" on the commandline'
+            print(msg)
+            raise FileNotFoundError(msg)
+        
         bibfile = open(outputfile,'w',encoding='utf-8')
         bibfile.write(bibtex)
 

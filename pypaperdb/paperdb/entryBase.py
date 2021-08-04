@@ -71,6 +71,7 @@ class Entry:
 
     def export_bibtex(self,writer):
         if writer.is_writer():
+            print(f'BIBT: {self.__bibtex}')
             return writer.write(self.__bibtex)
         
     # getter/setter function for bibtex

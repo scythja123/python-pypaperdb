@@ -7,7 +7,8 @@ from PyQt5 import QtWidgets
 import configparser
 import argparse
 import re
-import logging 
+import logging
+from pathlib import Path
 log = logging.getLogger(__name__)
 # print(f'current path {sys.path}')
 from pypaperdb import custom
@@ -82,6 +83,18 @@ def getConfig(filePath,custom_config_path):
     log.info(f'Loading config file {cfgFiles}')
     config.read(cfgFiles)
 
+    # extract the relative path to the custom config file
+    c = cfgFiles[-1] # is at the end
+    if not Path(c).is_absolute(): # if the configfile is relative to the path, we add this to the config
+        # check if the database file in the path is relative or absolute. If it is relative, we need to store the absolute path
+        dbPath = config.get('user','dbFile')
+        if not Path(dbPath).is_absolute():
+            # dbPath is relative to config
+            cfgBasePath = os.path.split(c)[0]
+            dbPath_full = os.path.abspath(cfgBasePath + '/' + dbPath)
+            log.info(f'Database location relative config path as abspath: {dbPath_full}')
+            config['user']['dbFile'] = dbPath_full
+
     return config
 
 def openDatabase():
@@ -146,6 +159,7 @@ def getBibtex():
     log.info("includedTags: " +  ", ".join(includedTags)) # not sure what this should
     options = {'excludedTags': excludedTags, 'includedTags':includedTags}
 
+    database = openDatabase()
     database.writeBibtexFromAux(custom.args.get_bibtex,options,custom.args.bibname)
 
     return 
